@@ -5,15 +5,25 @@ const cors = require('cors');
 const { port, urlcors } = require('./config');
 const { connection } = require('./config/db');
 
+const Vehiculo = require('./Routes/vehiculo');
 
 const app = express();
 connection();
 
+// Configuración de CORS
+const corsOptions = {
+    origin: urlcors,
+    methods: 'GET,PUT,POST,DELETE',
+    credentials: true,
+};
 
+// Middleware
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan('dev'));
 
 
+Vehiculo(app)
 
 app.listen(port, async () => {
     console.log(`El servidor está corriendo en http://localhost:${port}`);
