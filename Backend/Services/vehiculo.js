@@ -1,4 +1,4 @@
-const VehiculoModel = require('../models/Vehiculo');
+const VehiculoModel = require('../Models/VehiculoMol');
 
 class VehiculoService {
   async registrarEntrada(data) {
