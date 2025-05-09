@@ -1,0 +1,52 @@
+<div class="card">
+  <div class="card-header bg-info text-white">
+    <h5 class="mb-0">Vehículos Activos</h5>
+    <button (click)="cargarVehiculosActivos()" class="btn btn-sm btn-light">
+      <i class="bi bi-arrow-clockwise"></i> Actualizar
+    </button>
+  </div>
+  <div class="card-body">
+    @if (loading) {
+      <div class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    }
+    
+    @if (error) {
+      <div class="alert alert-danger">{{ error }}</div>
+    }
+    
+    @if (!loading && vehiculos.length > 0) {
+      <div class="table-responsive">
+        <table class="table table-striped table-hover">
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Tipo</th>
+              <th>Hora de Entrada</th>
+              <th>Tiempo Estacionado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (vehiculo of vehiculos; track vehiculo._id) {
+              <tr>
+                <td>{{ vehiculo.placa }}</td>
+                <td>{{ vehiculo.tipo }}</td>
+                <td>{{ vehiculo.horaEntrada | date:'medium' }}</td>
+                <td>{{ calcularTiempo(vehiculo.horaEntrada) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+    
+    @if (!loading && vehiculos.length === 0) {
+      <div class="alert alert-warning">
+        No hay vehículos activos en el parqueadero.
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,23 @@
+<!-- src/app/app.component.html -->
+<div class="container mt-4">
+  <h1 class="text-center mb-4">{{ title }}</h1>
+  
+  <ul class="nav nav-tabs mb-4">
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/entrada" routerLinkActive="active">Registro Entrada</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/salida" routerLinkActive="active">Registro Salida</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/activos" routerLinkActive="active">Vehículos Activos</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" routerLink="/historial" routerLinkActive="active">Consulta Historial</a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <router-outlet></router-outlet>
+  </div>
+</div>
