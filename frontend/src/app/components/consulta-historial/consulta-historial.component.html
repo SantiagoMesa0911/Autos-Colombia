@@ -1,0 +1,63 @@
+<div class="card">
+  <div class="card-header bg-secondary text-white">
+    <h5 class="mb-0">Consulta de Historial</h5>
+  </div>
+  <div class="card-body">
+    <form (ngSubmit)="consultarHistorial()" class="mb-4">
+      <div class="input-group">
+        <input type="text" class="form-control" placeholder="Ingrese placa del vehículo" 
+               [(ngModel)]="placa" name="placa" required>
+        <button class="btn btn-primary" type="submit" [disabled]="!placa.trim()">
+          Buscar
+        </button>
+      </div>
+    </form>
+    
+    @if (loading) {
+      <div class="text-center">
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    }
+    
+    @if (error) {
+      <div class="alert alert-danger">{{ error }}</div>
+    }
+    
+    @if (historial.length > 0) {
+      <div class="table-responsive">
+        <table class="table table-bordered">
+          <thead class="table-dark">
+            <tr>
+              <th>Placa</th>
+              <th>Tipo</th>
+              <th>Entrada</th>
+              <th>Salida</th>
+              <th>Tiempo</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (registro of historial; track registro._id) {
+              <tr>
+                <td>{{ registro.placa }}</td>
+                <td>{{ registro.tipo }}</td>
+                <td>{{ registro.horaEntrada | date:'medium' }}</td>
+                <td>
+                  @if (registro.horaSalida) {
+                    {{ registro.horaSalida | date:'medium' }}
+                  } @else {
+                    <span class="badge bg-success">Activo</span>
+                  }
+                </td>
+                <td>
+                  {{ calcularTiempoEstacionado(registro.horaEntrada, registro.horaSalida) }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>

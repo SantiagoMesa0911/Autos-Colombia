@@ -1,0 +1,28 @@
+<div class="card">
+    <div class="card-header">
+        <h3>Registrar Entrada de Vehículo</h3>
+    </div>
+    <div class="card-body">
+        <form (ngSubmit)="registrarEntrada()">
+            <div class="form-group">
+                <label for="placa">Placa:</label>
+                <input type="text" id="placa" class="form-control" [(ngModel)]="vehiculo.placa" name="placa" required>
+            </div>
+
+            <div class="form-group pb-3">
+                <label for="tipo">Tipo de vehículo:</label>
+                <select id="tipo" class="form-control" [(ngModel)]="vehiculo.tipo" name="tipo">
+                    <option value="carro">Carro</option>
+                    <option value="moto">Moto</option>
+                    <option value="bicicleta">Bicicleta</option>
+                    <option value="camion">Camión</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Registrar Entrada</button>
+        </form>
+
+        <div *ngIf="mensaje" class="alert alert-success mt-3">{{ mensaje }}</div>
+        <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+    </div>
+</div>

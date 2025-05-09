@@ -1,0 +1,20 @@
+<div class="card">
+  <div class="card-header bg-danger text-white">
+    <h5 class="mb-0">Registrar Salida de Vehículo</h5>
+  </div>
+  <div class="card-body">
+    <form (ngSubmit)="registrarSalida()" class="needs-validation" novalidate>
+      <div class="mb-3">
+        <label for="placaSalida" class="form-label">Placa</label>
+        <input type="text" class="form-control" id="placaSalida" 
+               [(ngModel)]="placa" name="placa" required>
+        <div class="invalid-feedback">Por favor ingresa la placa</div>
+      </div>
+      
+      <button type="submit" class="btn btn-danger">Registrar Salida</button>
+    </form>
+    
+    <div *ngIf="mensaje" class="alert alert-success mt-3">{{ mensaje }}</div>
+    <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+  </div>
+</div>
