@@ -30,3 +30,6 @@ app.listen(port, async () => {
 
 });
 
+app.get('/', async (req, res) => {
+    res.send('API DE AUTOS COLOMBIA')
+})
