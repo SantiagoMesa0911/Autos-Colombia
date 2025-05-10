@@ -2,8 +2,8 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 
-const { port, urlcors } = require('./config');
-const { connection } = require('./config/db');
+const { port, urlcors } = require('./Config');
+const { connection } = require('./Config/db');
 
 const Vehiculo = require('./Routes/vehiculo');
 
