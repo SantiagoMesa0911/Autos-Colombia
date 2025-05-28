@@ -1,26 +1,58 @@
 const VehiculoModel = require('../Models/VehiculoMol');
+const Celda = require('../Models/CeldaMol');
 
 class VehiculoService {
   async registrarEntrada(data) {
     const { placa, tipo } = data;
 
+    // Validación básica
     if (!placa || !tipo) {
-      throw new Error('Placa y tipo de vehículo son requeridos.');
+      throw new Error('Placa y tipo de vehículo son requeridos');
     }
 
-    // Verificar si ya está dentro
-    const activo = await VehiculoModel.findOne({ placa, horaSalida: null });
-    if (activo) {
-      throw new Error('El vehículo ya se encuentra registrado como activo.');
-    }
-
-    const nuevoRegistro = new VehiculoModel({
+    // Verificar si el vehículo ya está registrado y activo
+    const vehiculoActivo = await VehiculoModel.findOne({
       placa,
-      tipo,
-      horaEntrada: new Date(),
+      horaSalida: null
     });
 
-    return await nuevoRegistro.save();
+    if (vehiculoActivo) {
+      throw new Error('El vehículo ya se encuentra registrado');
+    }
+
+    // Buscar celda disponible según el tipo
+    const tipoCelda = this.mapearTipoVehiculoACelda(tipo);
+    const celdaDisponible = await Celda.findOne({
+      tipo: tipoCelda,
+      estado: 'disponible'
+    });
+
+    if (!celdaDisponible) {
+      throw new Error(`No hay celdas disponibles para ${tipo}`);
+    }
+
+    // Registrar el vehículo
+    const nuevoVehiculo = new VehiculoModel({
+      placa,
+      tipo,
+      horaEntrada: new Date()
+    });
+
+    const vehiculoGuardado = await nuevoVehiculo.save();
+
+    // Asignar celda
+    celdaDisponible.estado = 'ocupada';
+    celdaDisponible.vehiculo = vehiculoGuardado._id;
+    await celdaDisponible.save();
+
+    return {
+      message: 'Entrada registrada correctamente',
+      vehiculo: vehiculoGuardado,
+      celda: {
+        codigo: celdaDisponible.codigo,
+        piso: celdaDisponible.piso
+      }
+    };
   }
 
   async registrarSalida(placa) {
@@ -33,10 +65,29 @@ class VehiculoService {
     vehiculo.horaSalida = new Date();
     await vehiculo.save();
 
+    // Buscar la celda que tiene este vehículo asignado
+    const celda = await Celda.findOne({ vehiculo: vehiculo._id });
+    if (celda) {
+      celda.vehiculo = null;
+      celda.estado = 'disponible';
+      await celda.save();
+    }
+
     return {
-      message: 'Salida registrada correctamente.',
+      message: 'Salida registrada y celda liberada correctamente.',
       vehiculo,
+      celdaLiberada: celda || null
     };
+  }
+
+  mapearTipoVehiculoACelda(tipoVehiculo) {
+    const mapeo = {
+      carro: 'carro',
+      moto: 'moto',
+      discapacitado: 'discapacitado',
+      carga: 'carga'
+    };
+    return mapeo[tipoVehiculo] || 'carro';
   }
 
   async obtenerHistorial(placa) {

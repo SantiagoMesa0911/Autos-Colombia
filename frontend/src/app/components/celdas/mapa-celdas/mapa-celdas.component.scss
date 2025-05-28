@@ -1,0 +1,18 @@
+.card-celda {
+  transition: all 0.2s ease;
+  min-height: 120px;
+  
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.badge {
+  font-size: 0.85rem;
+  padding: 0.35em 0.65em;
+}
