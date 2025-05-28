@@ -39,4 +39,4 @@ const CeldaSchema = new mongoose.Schema({
 
 const Celda = mongoose.model('celda', CeldaSchema)
 
-module.exports = Celda
+module.exports = mongoose.models.celda || mongoose.model('celda', celdaSchema);

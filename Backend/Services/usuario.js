@@ -1,54 +1,71 @@
 const Usuario = require('../Models/UsuarioMol');
-const { generarJWT } = require('../helpers/jwt');
+const bcrypt = require('bcryptjs');
 
 class UsuarioService {
-  async crearUsuario(data) {
-    if (await Usuario.findOne({ email: data.email })) {
-      throw new Error('El email ya está registrado');
+    async crearUsuario(data) {
+        if (await Usuario.findOne({ email: data.email })) {
+            throw new Error('El email ya está registrado');
+        }
+        if (await Usuario.findOne({ identificacion: data.identificacion })) {
+            throw new Error('La identificación ya está registrada');
+        }
+        const usuario = new Usuario(data);
+        return await usuario.save();
     }
-    if (await Usuario.findOne({ identificacion: data.identificacion })) {
-      throw new Error('La identificación ya está registrada');
+
+    async obtenerUsuarios() {
+
+        return await Usuario.find();
     }
-    const usuario = new Usuario(data);
-    return await usuario.save();
-  }
 
-  async autenticarUsuario(email, password) {
-    const usuario = await Usuario.findOne({ email }).select('+password');
-    if (!usuario || !(await usuario.compararPassword(password))) {
-      throw new Error('Credenciales incorrectas');
+    async obtenerUsuarioPorId(id) {
+        const usuario = await Usuario.findById(id);
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
+        return usuario;
     }
-    if (!usuario.estado) {
-      throw new Error('Usuario inactivo');
+
+    async actualizarUsuario(id, data) {
+        if (data.password) {
+            const salt = await bcrypt.genSalt(10);
+            data.password = await bcrypt.hash(data.password, salt);
+        }
+
+        const usuario = await Usuario.findByIdAndUpdate(id, data, {
+            new: true,
+            runValidators: true
+        });
+
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
+
+        return usuario;
     }
-    const token = await generarJWT(usuario.id);
-    return { usuario, token };
-  }
 
-  async obtenerUsuarios(activos = true) {
-    const filtro = activos ? { estado: true } : {};
-    return await Usuario.find(filtro);
-  }
+    async cambiarEstadoUsuario(id, estado) {
+        const usuario = await Usuario.findByIdAndUpdate(
+            id,
+            { estado },
+            { new: true }
+        );
 
-  async obtenerUsuarioPorId(id) {
-    return await Usuario.findById(id);
-  }
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
 
-  async actualizarUsuario(id, data) {
-    if (data.password) {
-      const salt = await bcrypt.genSalt(10);
-      data.password = await bcrypt.hash(data.password, salt);
+        return usuario;
     }
-    return await Usuario.findByIdAndUpdate(id, data, { new: true });
-  }
 
-  async cambiarEstadoUsuario(id, estado) {
-    return await Usuario.findByIdAndUpdate(id, { estado }, { new: true });
-  }
 
-  async eliminarUsuario(id) {
-    return await Usuario.findByIdAndDelete(id);
-  }
+    async eliminarUsuario(id) {
+        const usuario = await Usuario.findByIdAndDelete(id);
+        if (!usuario) {
+            throw new Error('Usuario no encontrado');
+        }
+        return usuario;
+    }
 }
 
 module.exports = UsuarioService;
