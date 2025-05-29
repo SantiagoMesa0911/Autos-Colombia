@@ -1,0 +1,34 @@
+<div class="container mt-4">
+  <h2>Crear Nuevo Usuario</h2>
+  <form (ngSubmit)="crearUsuario()" #usuarioForm="ngForm">
+    <div class="mb-3">
+      <label>Nombre</label>
+      <input type="text" class="form-control" [(ngModel)]="usuario.nombre" name="nombre" required>
+    </div>
+    <div class="mb-3">
+      <label>Identificación</label>
+      <input type="text" class="form-control" [(ngModel)]="usuario.identificacion" name="identificacion" required>
+    </div>
+    <div class="mb-3">
+      <label>Email</label>
+      <input type="email" class="form-control" [(ngModel)]="usuario.email" name="email" required>
+    </div>
+    <div class="mb-3">
+      <label>Contraseña</label>
+      <input type="password" class="form-control" [(ngModel)]="usuario.password" name="password" required>
+    </div>
+    <div class="mb-3">
+      <label>Teléfono</label>
+      <input type="text" class="form-control" [(ngModel)]="usuario.telefono" name="telefono" required>
+    </div>
+    <div class="mb-3">
+      <label>Tipo</label>
+      <select class="form-control" [(ngModel)]="usuario.tipo" name="tipo" required>
+        <option value="admin">Administrador</option>
+        <option value="empleado">Empleado</option>
+        <option value="cliente">Cliente</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary" [disabled]="usuarioForm.invalid">Crear Usuario</button>
+  </form>
+</div>

@@ -1,0 +1,20 @@
+<h2>Editar Usuario</h2>
+<form (ngSubmit)="actualizarUsuario()" #usuarioForm="ngForm">
+  <div class="form-group">
+    <label>Nombre</label>
+    <input class="form-control" [(ngModel)]="usuario.nombre" name="nombre" required />
+  </div>
+  <div class="form-group">
+    <label>Identificación</label>
+    <input class="form-control" [(ngModel)]="usuario.identificacion" name="identificacion" required />
+  </div>
+  <div class="form-group">
+    <label>Email</label>
+    <input class="form-control" [(ngModel)]="usuario.email" name="email" required />
+  </div>
+  <div class="form-group">
+    <label>Teléfono</label>
+    <input class="form-control" [(ngModel)]="usuario.telefono" name="telefono" required />
+  </div>
+  <button class="btn btn-primary mt-3" type="submit">Actualizar</button>
+</form>
