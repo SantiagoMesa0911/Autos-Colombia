@@ -1,28 +1,68 @@
-<div class="card">
-    <div class="card-header">
-        <h3>Registrar Entrada de Vehículo</h3>
+<div class="card mt-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <h3>Registrar Entrada de Vehículo</h3>
+    <div *ngIf="usuario">
+      <small>Bienvenido, <strong>{{ usuario.nombre }}</strong></small>
     </div>
-    <div class="card-body">
-        <form (ngSubmit)="registrarEntrada()">
-            <div class="form-group">
-                <label for="placa">Placa:</label>
-                <input type="text" id="placa" class="form-control" [(ngModel)]="vehiculo.placa" name="placa" required>
-            </div>
+  </div>
 
-            <div class="form-group pb-3">
-                <label for="tipo">Tipo de vehículo:</label>
-                <select id="tipo" class="form-control" [(ngModel)]="vehiculo.tipo" name="tipo">
-                    <option value="carro">Carro</option>
-                    <option value="moto">Moto</option>
-                    <option value="bicicleta">Bicicleta</option>
-                    <option value="camion">Camión</option>
-                </select>
-            </div>
+  <div class="card-body">
+    <form (ngSubmit)="registrarEntrada()" #form="ngForm">
+      <div class="mb-3">
+        <label for="placa" class="form-label">Placa:</label>
+        <input 
+          type="text" 
+          id="placa" 
+          class="form-control" 
+          [(ngModel)]="vehiculo.placa" 
+          name="placa" 
+          required
+          pattern="[A-Za-z0-9]{6}"
+          title="La placa debe tener 6 caracteres alfanuméricos"
+          #placa="ngModel"
+        >
+        <div *ngIf="placa.invalid && (placa.dirty || placa.touched)" class="text-danger">
+          <small *ngIf="placa.errors?.['required']">La placa es requerida</small>
+          <small *ngIf="placa.errors?.['pattern']">Formato de placa inválido</small>
+        </div>
+      </div>
 
-            <button type="submit" class="btn btn-primary">Registrar Entrada</button>
-        </form>
+      <div class="mb-3">
+        <label for="tipo" class="form-label">Tipo de vehículo:</label>
+        <select 
+          id="tipo" 
+          class="form-select" 
+          [(ngModel)]="vehiculo.tipo" 
+          name="tipo"
+          required
+          #tipo="ngModel"
+        >
+          <option value="carro">Carro</option>
+          <option value="moto">Moto</option>
+          <option value="discapacitado">Discapacitado</option>
+          <option value="carga">Vehículo de carga</option>
+        </select>
+        <div *ngIf="tipo.invalid && (tipo.dirty || tipo.touched)" class="text-danger">
+          <small>El tipo de vehículo es requerido</small>
+        </div>
+      </div>
 
-        <div *ngIf="mensaje" class="alert alert-success mt-3">{{ mensaje }}</div>
-        <div *ngIf="error" class="alert alert-danger mt-3">{{ error }}</div>
+      <button 
+        type="submit" 
+        class="btn btn-primary"
+        [disabled]="form.invalid"
+      >
+        Registrar Entrada
+      </button>
+    </form>
+
+    <div *ngIf="mensaje" class="alert alert-success mt-3">
+      <i class="bi bi-check-circle-fill me-2"></i>
+      {{ mensaje }}
     </div>
+    <div *ngIf="error" class="alert alert-danger mt-3">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+      {{ error }}
+    </div>
+  </div>
 </div>

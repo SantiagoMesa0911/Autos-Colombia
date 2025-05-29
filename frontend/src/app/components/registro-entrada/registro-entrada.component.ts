@@ -1,9 +1,9 @@
-// src/app/components/registro-entrada/registro-entrada.component.ts
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
+import { CommonModule, NgIf } from '@angular/common';
 import { VehiculoService } from '../../services/vehiculo.service';
-import { NgIf } from '@angular/common';
+import { AuthService } from '../../services/auth.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-registro-entrada',
@@ -12,24 +12,48 @@ import { NgIf } from '@angular/common';
   templateUrl: './registro-entrada.component.html',
   styleUrls: ['./registro-entrada.component.css']
 })
-export class RegistroEntradaComponent {
-  vehiculo = { placa: '', tipo: 'carro' };
+export class RegistroEntradaComponent implements OnInit {
+
+  vehiculo = {
+    placa: '',
+    tipo: 'carro' as 'carro' | 'moto' | 'discapacitado' | 'carga'
+  };
   mensaje: string | null = null;
   error: string | null = null;
+  usuario: any = null;
 
-  constructor(private vehiculoService: VehiculoService) {}
+  constructor(
+    private vehiculoService: VehiculoService,
+    private authService: AuthService
+  ) { }
+
+  ngOnInit(): void {
+    this.usuario = this.authService.getCurrentUser();
+  }
 
   registrarEntrada() {
     this.mensaje = null;
     this.error = null;
 
+    // Validación básica en frontend
+    if (!this.vehiculo.placa || !this.vehiculo.tipo) {
+      this.error = 'Placa y tipo son requeridos';
+      return;
+    }
+
     this.vehiculoService.registrarEntrada(this.vehiculo).subscribe({
-      next: () => {
-        this.mensaje = 'Entrada registrada correctamente';
+      next: (response: any) => {
+        this.mensaje = response.message || 'Vehículo registrado exitosamente';
+        if (response.celda) {
+          this.mensaje += ` en celda ${response.celda.codigo} (Piso ${response.celda.piso})`;
+        }
         this.vehiculo.placa = '';
       },
-      error: (err) => {
-        this.error = err.error?.message || 'Error al registrar entrada';
+      error: (err: HttpErrorResponse) => {
+        console.error('Error registrando entrada:', err);
+        this.error = err.error?.message ||
+          err.message ||
+          'Error desconocido al registrar entrada';
       }
     });
   }
