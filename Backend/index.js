@@ -7,7 +7,6 @@ const { connection } = require('./Config/db');
 
 const seedCeldas = require('./Scripts/seedCeldas');
 
-
 const AuthRoutes = require('./Routes/auth.routes');
 const Vehiculo = require('./Routes/vehiculo');
 const UsuarioRoutes = require('./Routes/usuario');
@@ -35,12 +34,25 @@ CeldaRoutes(app)
 AuthRoutes(app);
 
 app.listen(port, async () => {
-    const seedResult = await seedCeldas();
-    console.log(seedResult.message);
-    console.log(`El servidor está corriendo en http://localhost:${port}`);
-
+    try {
+        const seedResult = await seedCeldas();
+        console.log(seedResult.message);
+        console.log(`✅ Servidor corriendo en http://localhost:${port}`);
+    } catch (error) {
+        console.error('❌ Error al iniciar el servidor:', error.message);
+        process.exit(1); 
+    }
 });
 
 app.get('/', async (req, res) => {
-    res.send('API DE AUTOS COLOMBIA')
-})
+    try {
+        res.send('API DE AUTOS COLOMBIA');
+    } catch (error) {
+        console.error('Error en la ruta /:', error);
+        res.status(500).send('Error interno del servidor');
+    }
+});
+
+process.on('unhandledRejection', (err) => {
+    console.error('⚠️ Error no manejado (unhandledRejection):', err);
+});
