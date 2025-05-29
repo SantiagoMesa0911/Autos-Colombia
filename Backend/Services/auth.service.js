@@ -1,5 +1,5 @@
 const Usuario = require('../Models/UsuarioMol');
-const { generarJWT } = require('../helpers/jwt');
+const { generarJWT } = require('../Helpers/jwt');
 
 class AuthService {
     async autenticarUsuario(email, password) {

@@ -34,25 +34,12 @@ CeldaRoutes(app)
 AuthRoutes(app);
 
 app.listen(port, async () => {
-    try {
-        const seedResult = await seedCeldas();
-        console.log(seedResult.message);
-        console.log(`✅ Servidor corriendo en http://localhost:${port}`);
-    } catch (error) {
-        console.error('❌ Error al iniciar el servidor:', error.message);
-        process.exit(1); 
-    }
+    const seedResult = await seedCeldas();
+    console.log(seedResult.message);
+    console.log(`El servidor está corriendo en http://localhost:${port}`);
+
 });
 
 app.get('/', async (req, res) => {
-    try {
-        res.send('API DE AUTOS COLOMBIA');
-    } catch (error) {
-        console.error('Error en la ruta /:', error);
-        res.status(500).send('Error interno del servidor');
-    }
-});
-
-process.on('unhandledRejection', (err) => {
-    console.error('⚠️ Error no manejado (unhandledRejection):', err);
-});
+    res.send('API DE AUTOS COLOMBIA')
+})
